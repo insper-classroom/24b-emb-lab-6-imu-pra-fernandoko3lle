@@ -11,41 +11,50 @@ device = uinput.Device([
     uinput.REL_Y,
 ])
 
+# Limiar de velocidade para ativar o clique (ajuste conforme necessário)
+VELOCIDADE_LIMIAR = 20
 
 def parse_data(data):
-    axis = data[0]  # 0 for X, 1 for Y
+    axis = data[0]  # 0 para X, 1 para Y
     value = int.from_bytes(data[1:3], byteorder='big', signed=True)
+    vel = data[3]  # Velocidade extraída
     print(f"Received data: {data}")
-    print(f"axis: {axis}, value: {value}")
-    return axis, value
-
+    print(f"axis: {axis}, value: {value}, vel: {vel}")
+    return axis, value, vel
 
 def move_mouse(axis, value):
-    if axis == 0:    # X-axis
+    if axis == 0:    # Eixo X
         device.emit(uinput.REL_X, value)
-    elif axis == 1:  # Y-axis
+    elif axis == 1:  # Eixo Y
         device.emit(uinput.REL_Y, value)
 
+def check_for_click(vel):
+    # Se a velocidade exceder o limite, executa um clique
+    if vel > VELOCIDADE_LIMIAR:
+        print('Click detected! Performing mouse click.')
+        device.emit(uinput.BTN_LEFT, 1)  # Pressionar botão esquerdo
+        device.emit(uinput.BTN_LEFT, 0)  # Soltar botão esquerdo
 
 try:
-    # sync package
+    # Sincronizando o pacote
     while True:
-        print('Waiting for sync package...')
+        print('Esperando pelo pacote de sincronização...')
         while True:
             data = ser.read(1)
             if data == b'\xff':
                 break
             else:
-                print(f"Received error: {data}")
+                print(f"Erro recebido: {data}")
 
-        # Read 4 bytes from UART
-        data = ser.read(3)
-        axis, value = parse_data(data)
+        # Ler 4 bytes da UART
+        data = ser.read(4)  # Agora estamos lendo 4 bytes, incluindo a velocidade
+        axis, value, vel = parse_data(data)
         move_mouse(axis, value)
+        check_for_click(vel)  # Verifica se é necessário fazer o clique
 
 except KeyboardInterrupt:
-    print("Program terminated by user")
+    print("Programa interrompido pelo usuário.")
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"Ocorreu um erro: {e}")
 finally:
     ser.close()
