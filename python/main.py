@@ -17,7 +17,10 @@ VELOCIDADE_LIMIAR = 20
 def parse_data(data):
     axis = data[0]  # 0 para X, 1 para Y
     value = int.from_bytes(data[1:3], byteorder='big', signed=True)
-    vel = data[3]  # Velocidade extraída
+    if axis == 0:
+        vel = data[3]  # Velocidade extraída
+    else:
+        vel = 0
     print(f"Received data: {data}")
     print(f"axis: {axis}, value: {value}, vel: {vel}")
     return axis, value, vel

@@ -139,16 +139,15 @@ void uart_task(void *p) {
             pacote_x[4] = EOP;
             uart_write_blocking(uart0, pacote_x, 5);
 
-            uint8_t pacote_y[5];
+            uint8_t pacote_y[4];
             uint8_t AXIS_Y = 1;
             uint8_t VAL_1x = (data.y >> 8) & 0xFF;  // Byte mais significativo (MSB)
             uint8_t VAL_0x = data.y & 0xFF;         // Byte menos significativo (LSB)
             pacote_y[0] = AXIS_Y;
             pacote_y[1] = VAL_1x;
             pacote_y[2] = VAL_0x;
-            pacote_y[3] = data.velx;
-            pacote_y[4] = EOP;
-            uart_write_blocking(uart0, pacote_y, 5);
+            pacote_y[3] = EOP;
+            uart_write_blocking(uart0, pacote_y, 4);
             vTaskDelay(pdMS_TO_TICKS(50));
 
         }
