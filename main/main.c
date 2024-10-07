@@ -135,7 +135,7 @@ void uart_task(void *p) {
             pacote_x[0] = AXIS_X;
             pacote_x[1] = VAL_1;
             pacote_x[2] = VAL_0;
-            pacote_x[3] = VEL;
+            pacote_x[3] = VEL & 0xFF;
             pacote_x[4] = EOP;
             uart_write_blocking(uart0, pacote_x, 5);
 
