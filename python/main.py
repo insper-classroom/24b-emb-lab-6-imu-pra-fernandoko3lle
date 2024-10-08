@@ -12,7 +12,7 @@ device = uinput.Device([
 ])
 
 # Limiar de velocidade para ativar o clique (ajuste conforme necessário)
-VELOCIDADE_LIMIAR = 20
+VELOCIDADE_LIMIAR = 50
 
 def parse_data(data):
     axis = data[0]  # 0 para X, 1 para Y

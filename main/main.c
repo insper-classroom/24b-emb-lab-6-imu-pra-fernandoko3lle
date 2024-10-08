@@ -108,8 +108,8 @@ void mpu6050_task(void *p) {
             .axis.z = acceleration[2] / 16384.0f,
         }; 
 
-        data.x = (int) gyroscope.axis.y;
-        data.y = (int) gyroscope.axis.x;
+        data.x = (int) gyroscope.axis.x;
+        data.y = (int) gyroscope.axis.y;
         data.velx = (int) accelerometer.axis.x;
         
         xQueueSend(xQueueI2C, &data, portMAX_DELAY);
@@ -124,9 +124,9 @@ void uart_task(void *p) {
     data_t data;
     
     while (1) {
-        uint8_t pacote_x[5];
+        
         if (xQueueReceive(xQueueI2C, &data, portMAX_DELAY)){
-
+            uint8_t pacote_x[5];
             uint8_t AXIS_X = 0;
             uint8_t VAL_1 = (data.x >> 8) & 0xFF;  // Byte mais significativo (MSB)
             uint8_t VAL_0 = data.x & 0xFF; // Byte menos significativo (LSB)
